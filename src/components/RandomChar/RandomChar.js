@@ -79,7 +79,6 @@ class RandomChar extends Component {
 }
 
 const View = ({ char: { thumbnail, name, description, homepage, wiki } }) => {
-  console.log(thumbnail);
   const isImage = thumbnail.includes('available');
 
   return (

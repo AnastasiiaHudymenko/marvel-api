@@ -19,7 +19,7 @@ class MarvelService {
     );
 
     const data = res.data.data.results.map(this._transformCharsater);
-    console.log(data);
+    return data;
   };
 
   getCharacter = async id => {
@@ -36,6 +36,7 @@ class MarvelService {
       thumbnail: `${charseter.thumbnail.path}.${charseter.thumbnail.extension}`,
       homepage: charseter.urls[0].url,
       wiki: charseter.urls[1].url,
+      id: charseter.id,
     };
   };
 }
