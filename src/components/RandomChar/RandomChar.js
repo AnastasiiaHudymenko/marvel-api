@@ -1,4 +1,4 @@
-// import './randomChar.scss';
+import './randomChar.scss';
 import thor from '../../resources/img/thor.jpeg';
 import mjolnir from '../../resources/img/mjolnir.png';
 
@@ -16,10 +16,10 @@ const RandomChar = () => {
             quite smart and compassionate...
           </p>
           <div className="randomchar__btns">
-            <a href="#" className="button button__main">
+            <a href="facebook.com" className="button button__main">
               <div className="inner">homepage</div>
             </a>
-            <a href="#" className="button button__secondary">
+            <a href="facebook.com" className="button button__secondary">
               <div className="inner">Wiki</div>
             </a>
           </div>
