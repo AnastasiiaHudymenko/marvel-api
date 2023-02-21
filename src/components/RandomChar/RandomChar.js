@@ -1,7 +1,7 @@
 import { Component } from 'react';
 import MarvelService from '../../services/MarvelService';
 import './randomChar.scss';
-
+import { truncateString } from '../auxiliaryFunctions/truncateString';
 import mjolnir from '../../resources/img/mjolnir.png';
 
 class RandomChar extends Component {
@@ -21,6 +21,7 @@ class RandomChar extends Component {
 
   updateChar = async () => {
     const id = Math.floor(Math.random() * (1011400 - 1011000) + 1011000);
+
     const res = await this.marvelService.getCharacter(id);
     this.onCharLoaded(res);
   };
@@ -39,7 +40,14 @@ class RandomChar extends Component {
           />
           <div className="randomchar__info">
             <p className="randomchar__name">{name}</p>
-            <p className="randomchar__descr">{description}</p>
+            {description ? (
+              <p className="randomchar__descr">{truncateString(description)}</p>
+            ) : (
+              <p className="randomchar__descr">
+                No description found for this character
+              </p>
+            )}
+
             <div className="randomchar__btns">
               <a href={homepage} className="button button__main">
                 <div className="inner">homepage</div>
