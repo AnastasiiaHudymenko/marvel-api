@@ -1,63 +1,62 @@
 import { Component } from 'react';
+import { MutatingDots } from 'react-loader-spinner';
 import MarvelService from '../../services/MarvelService';
-import './randomChar.scss';
+import { ErrorMessage } from '../ErrorMessage/ErrorMessage';
 import { truncateString } from '../auxiliaryFunctions/truncateString';
 import mjolnir from '../../resources/img/mjolnir.png';
+import './randomChar.scss';
 
 class RandomChar extends Component {
   state = {
     char: {},
+    loading: true,
+    error: false,
   };
+
+  marvelService = new MarvelService();
 
   componentDidMount = () => {
     this.updateChar();
   };
 
-  marvelService = new MarvelService();
-
   onCharLoaded = char => {
-    this.setState({ char });
+    this.setState({ char, loading: false });
+  };
+
+  onError = () => {
+    this.setState({ error: true, loading: false });
   };
 
   updateChar = async () => {
     const id = Math.floor(Math.random() * (1011400 - 1011000) + 1011000);
 
-    const res = await this.marvelService.getCharacter(id);
-    this.onCharLoaded(res);
+    try {
+      const res = await this.marvelService.getCharacter(id);
+      this.onCharLoaded(res);
+    } catch (error) {
+      this.onError();
+    }
   };
 
   render() {
-    const {
-      char: { name, description, thumbnail, homepage, wiki },
-    } = this.state;
+    const { char, loading, error } = this.state;
+    const errorMessage = error ? <ErrorMessage /> : null;
+    const loader = loading ? (
+      <MutatingDots
+        height="100"
+        width="100"
+        color="#344434"
+        ariaLabel="mutating-dots-loading"
+        wrapperClass="loader"
+      />
+    ) : null;
+    const content = !(error || loader) ? <View char={char} /> : null;
+
     return (
       <div className="randomchar">
-        <div className="randomchar__block">
-          <img
-            src={thumbnail}
-            alt="Random character"
-            className="randomchar__img"
-          />
-          <div className="randomchar__info">
-            <p className="randomchar__name">{name}</p>
-            {description ? (
-              <p className="randomchar__descr">{truncateString(description)}</p>
-            ) : (
-              <p className="randomchar__descr">
-                No description found for this character
-              </p>
-            )}
-
-            <div className="randomchar__btns">
-              <a href={homepage} className="button button__main">
-                <div className="inner">homepage</div>
-              </a>
-              <a href={wiki} className="button button__secondary">
-                <div className="inner">Wiki</div>
-              </a>
-            </div>
-          </div>
-        </div>
+        {errorMessage}
+        {loader}
+        {content}
         <div className="randomchar__static">
           <p className="randomchar__title">
             Random character for today!
@@ -74,5 +73,32 @@ class RandomChar extends Component {
     );
   }
 }
+
+const View = ({ char: { thumbnail, name, description, homepage, wiki } }) => {
+  return (
+    <div className="randomchar__block">
+      <img src={thumbnail} alt="Random character" className="randomchar__img" />
+      <div className="randomchar__info">
+        <p className="randomchar__name">{name}</p>
+        {description ? (
+          <p className="randomchar__descr">{truncateString(description)}</p>
+        ) : (
+          <p className="randomchar__descr">
+            No description found for this character
+          </p>
+        )}
+
+        <div className="randomchar__btns">
+          <a href={homepage} className="button button__main">
+            <div className="inner">homepage</div>
+          </a>
+          <a href={wiki} className="button button__secondary">
+            <div className="inner">Wiki</div>
+          </a>
+        </div>
+      </div>
+    </div>
+  );
+};
 
 export default RandomChar;
