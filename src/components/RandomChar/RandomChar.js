@@ -27,7 +27,8 @@ class RandomChar extends Component {
     this.setState({ error: true, loading: false });
   };
 
-  handlClickChar = () => {
+  handlChooseChar = () => {
+    this.setState({ loading: true, error: false });
     this.updateChar();
   };
 
@@ -68,7 +69,10 @@ class RandomChar extends Component {
             Do you want to get to know him better?
           </p>
           <p className="randomchar__title">Or choose another one</p>
-          <button onClick={this.handlClickChar} className="button button__main">
+          <button
+            onClick={this.handlChooseChar}
+            className="button button__main"
+          >
             <div className="inner">try it</div>
           </button>
           <img src={mjolnir} alt="mjolnir" className="randomchar__decoration" />
