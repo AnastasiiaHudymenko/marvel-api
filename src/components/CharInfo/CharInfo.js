@@ -16,10 +16,13 @@ const CharInfo = ({ charId }) => {
 
   useEffect(() => {
     updateChar();
+
+    // eslint-disable-next-line
   }, []);
 
   useEffect(() => {
     updateChar();
+    // eslint-disable-next-line
   }, [charId]);
 
   const onCharLoaded = char => {
