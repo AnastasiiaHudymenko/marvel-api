@@ -1,63 +1,66 @@
-import { Component } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { MutatingDots } from 'react-loader-spinner';
 import { ErrorMessage } from '../ErrorMessage/ErrorMessage';
 import MarvelService from '../../services/MarvelService';
 import './charList.scss';
 
-class CharList extends Component {
-  state = {
-    charList: [],
-    loading: true,
-    error: false,
-    offset: 210,
-    newLoading: false,
-    charending: false,
-  };
+const CharList = props => {
+  const [charList, setCharList] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
+  const [offset, setOffset] = useState(210);
+  const [newLoading, setNewLoading] = useState(false);
+  const [charending, setCharending] = useState(false);
 
-  marvelService = new MarvelService();
+  const marvelService = new MarvelService();
 
-  async componentDidMount() {
-    this.onRequest();
-  }
+  useEffect(() => {
+    onRequest();
+  }, []);
 
-  onRequest = async offset => {
+  const onRequest = async offset => {
     try {
-      this.onCharListLoading();
-      const res = await this.marvelService.getAllCharacters(offset);
-      this.onCharListLoaded(res);
+      onCharListLoading();
+      const res = await marvelService.getAllCharacters(offset);
+      onCharListLoaded(res);
     } catch (error) {
-      this.onError();
+      onError();
     }
   };
 
-  onCharListLoaded = newCharList => {
+  const onCharListLoaded = newCharList => {
     let ending = false;
     if (newCharList.length < 9) {
       ending = true;
     }
-
-    this.setState(({ charList, offset }) => ({
-      charList: [...charList, ...newCharList],
-      loading: false,
-      offset: offset + 9,
-      newLoading: false,
-      charending: ending,
-    }));
+    setCharList(charList => [...charList, ...newCharList]);
+    setLoading(false);
+    setOffset(offset => offset + 9);
+    setNewLoading(false);
+    setCharending(ending);
   };
 
-  onCharListLoading = () => {
-    this.setState({ newLoading: true });
+  const onCharListLoading = () => {
+    setNewLoading(true);
   };
 
-  onError = () => {
-    this.setState({
-      error: true,
-      loading: false,
-    });
+  const onError = () => {
+    setError(true);
+    setLoading(false);
   };
 
-  renderItems(arr) {
-    const items = arr.map(item => {
+  const itemsRef = useRef([]);
+
+  const focusOnItem = id => {
+    itemsRef.current.forEach(item =>
+      item.classList.remove('char__item_selected')
+    );
+    itemsRef.current[id].classList.add('char__item_selected');
+    itemsRef.current[id].focus();
+  };
+
+  function renderItems(arr) {
+    const items = arr.map((item, i) => {
       let imgStyle = { objectFit: 'cover' };
       if (
         item.thumbnail ===
@@ -68,9 +71,13 @@ class CharList extends Component {
 
       return (
         <li
+          ref={el => (itemsRef.current[i] = el)}
           className="char__item"
           key={item.id}
-          onClick={() => this.props.onCharSelected(item.id)}
+          onClick={() => {
+            props.onCharSelected(item.id);
+            focusOnItem(i);
+          }}
         >
           <img src={item.thumbnail} alt={item.name} style={imgStyle} />
           <div className="char__name">{item.name}</div>
@@ -81,40 +88,35 @@ class CharList extends Component {
     return <ul className="char__grid">{items}</ul>;
   }
 
-  render() {
-    const { charList, loading, error, offset, newLoading, charending } =
-      this.state;
+  const items = renderItems(charList);
 
-    const items = this.renderItems(charList);
+  const errorMessage = error ? <ErrorMessage /> : null;
+  const spinner = loading ? (
+    <MutatingDots
+      height="100"
+      width="100"
+      color="#344434"
+      ariaLabel="mutating-dots-loading"
+      wrapperClass="loader"
+    />
+  ) : null;
+  const content = !(loading || error) ? items : null;
 
-    const errorMessage = error ? <ErrorMessage /> : null;
-    const spinner = loading ? (
-      <MutatingDots
-        height="100"
-        width="100"
-        color="#344434"
-        ariaLabel="mutating-dots-loading"
-        wrapperClass="loader"
-      />
-    ) : null;
-    const content = !(loading || error) ? items : null;
-
-    return (
-      <div className="char__list">
-        {errorMessage}
-        {spinner}
-        {content}
-        <button
-          className="button button__main button__long"
-          disabled={newLoading}
-          onClick={() => this.onRequest(offset)}
-          style={{ display: `${charending ? 'none' : 'block'}` }}
-        >
-          <div className="inner">load more</div>
-        </button>
-      </div>
-    );
-  }
-}
+  return (
+    <div className="char__list">
+      {errorMessage}
+      {spinner}
+      {content}
+      <button
+        className="button button__main button__long"
+        disabled={newLoading}
+        onClick={() => onRequest(offset)}
+        style={{ display: `${charending ? 'none' : 'block'}` }}
+      >
+        <div className="inner">load more</div>
+      </button>
+    </div>
+  );
+};
 
 export default CharList;

@@ -1,4 +1,4 @@
-import { Component } from 'react';
+import { useEffect, useState } from 'react';
 import { MutatingDots } from 'react-loader-spinner';
 import MarvelService from '../../services/MarvelService';
 import './charInfo.scss';
@@ -7,73 +7,66 @@ import Skeleton from '../Skeleton/Skeleton';
 import { truncateString } from '../auxiliaryFunctions/truncateString';
 import { trimArr } from '../auxiliaryFunctions/trimArr';
 
-class CharInfo extends Component {
-  state = {
-    char: null,
-    loading: false,
-    error: false,
+const CharInfo = ({ charId }) => {
+  const [char, setChar] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(false);
+
+  const marvelService = new MarvelService();
+
+  useEffect(() => {
+    updateChar();
+  }, []);
+
+  useEffect(() => {
+    updateChar();
+  }, [charId]);
+
+  const onCharLoaded = char => {
+    setChar(char);
+    setLoading(false);
   };
 
-  marvelService = new MarvelService();
-
-  componentDidMount() {
-    this.updateChar();
-  }
-
-  componentDidUpdate({ charId }) {
-    if (charId !== this.props.charId) {
-      this.updateChar();
-    }
-  }
-
-  onCharLoaded = char => {
-    this.setState({ char, loading: false });
+  const onError = () => {
+    setError(true);
+    setLoading(false);
   };
 
-  onError = () => {
-    this.setState({ error: true, loading: false });
-  };
-
-  updateChar = async () => {
-    const { charId } = this.props;
+  const updateChar = async () => {
     if (!charId) {
       return;
     }
     try {
-      this.setState({ loading: true });
-      const res = await this.marvelService.getCharacter(charId);
-      this.onCharLoaded(res);
+      setLoading(true);
+      const res = await marvelService.getCharacter(charId);
+      onCharLoaded(res);
     } catch (error) {
-      this.onError();
+      onError();
     }
   };
 
-  render() {
-    const { error, loading, char } = this.state;
+  const errorMessage = error ? <ErrorMessage /> : null;
+  const loader = loading ? (
+    <MutatingDots
+      height="100"
+      width="100"
+      color="#344434"
+      ariaLabel="mutating-dots-loading"
+      wrapperClass="loader"
+    />
+  ) : null;
+  const content = !(error || loader || !char) ? <View char={char} /> : null;
+  const skeleton = error || char || loader ? null : <Skeleton />;
 
-    const errorMessage = error ? <ErrorMessage /> : null;
-    const loader = loading ? (
-      <MutatingDots
-        height="100"
-        width="100"
-        color="#344434"
-        ariaLabel="mutating-dots-loading"
-        wrapperClass="loader"
-      />
-    ) : null;
-    const content = !(error || loader || !char) ? <View char={char} /> : null;
-    const skeleton = error || char || loader ? null : <Skeleton />;
-
-    return (
-      <div className="char__info">
-        {skeleton}
-        {errorMessage}
-        {loader}
-        {content}
-      </div>
-    );
-  }
-}
+  return (
+    <div className="char__info">
+      {skeleton}
+      {errorMessage}
+      {loader}
+      {content}
+    </div>
+  );
+};
 
 const View = ({ char }) => {
   const { thumbnail, name, description, homepage, wiki, comics } = char;

@@ -1,4 +1,4 @@
-import { Component } from 'react';
+import { useState, useEffect } from 'react';
 import { MutatingDots } from 'react-loader-spinner';
 import MarvelService from '../../services/MarvelService';
 import { ErrorMessage } from '../ErrorMessage/ErrorMessage';
@@ -6,81 +6,76 @@ import { truncateString } from '../auxiliaryFunctions/truncateString';
 import mjolnir from '../../resources/img/mjolnir.png';
 import './randomChar.scss';
 
-class RandomChar extends Component {
-  state = {
-    char: {},
-    loading: true,
-    error: false,
+const RandomChar = () => {
+  const [char, setChar] = useState({});
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
+
+  const marvelService = new MarvelService();
+
+  useEffect(() => {
+    updateChar();
+  }, []);
+
+  const onCharLoaded = char => {
+    setChar(char);
+    setLoading(false);
   };
 
-  marvelService = new MarvelService();
-
-  componentDidMount = () => {
-    this.updateChar();
+  const onError = () => {
+    setError(true);
+    setLoading(false);
   };
 
-  onCharLoaded = char => {
-    this.setState({ char, loading: false });
+  const handlChooseChar = () => {
+    setLoading(true);
+    setError(false);
+    updateChar();
   };
 
-  onError = () => {
-    this.setState({ error: true, loading: false });
-  };
-
-  handlChooseChar = () => {
-    this.setState({ loading: true, error: false });
-    this.updateChar();
-  };
-
-  updateChar = async () => {
+  const updateChar = async () => {
     const id = Math.floor(Math.random() * (1011400 - 1011000) + 1011000);
 
     try {
-      const res = await this.marvelService.getCharacter(id);
-      this.onCharLoaded(res);
+      const res = await marvelService.getCharacter(id);
+      onCharLoaded(res);
     } catch (error) {
-      this.onError();
+      onError();
     }
   };
 
-  render() {
-    const { char, loading, error } = this.state;
-    const errorMessage = error ? <ErrorMessage /> : null;
-    const loader = loading ? (
-      <MutatingDots
-        height="100"
-        width="100"
-        color="#344434"
-        ariaLabel="mutating-dots-loading"
-        wrapperClass="loader"
-      />
-    ) : null;
-    const content = !(error || loader) ? <View char={char} /> : null;
+  const errorMessage = error ? <ErrorMessage /> : null;
+  const loader = loading ? (
+    <MutatingDots
+      height="100"
+      width="100"
+      color="#344434"
+      ariaLabel="mutating-dots-loading"
+      wrapperClass="loader"
+    />
+  ) : null;
+  const content = !(error || loader) ? <View char={char} /> : null;
 
-    return (
-      <div className="randomchar">
-        {errorMessage}
-        {loader}
-        {content}
-        <div className="randomchar__static">
-          <p className="randomchar__title">
-            Random character for today!
-            <br />
-            Do you want to get to know him better?
-          </p>
-          <p className="randomchar__title">Or choose another one</p>
-          <button
-            onClick={this.handlChooseChar}
-            className="button button__main"
-          >
-            <div className="inner">try it</div>
-          </button>
-          <img src={mjolnir} alt="mjolnir" className="randomchar__decoration" />
-        </div>
+  return (
+    <div className="randomchar">
+      {errorMessage}
+      {loader}
+      {content}
+      <div className="randomchar__static">
+        <p className="randomchar__title">
+          Random character for today!
+          <br />
+          Do you want to get to know him better?
+        </p>
+        <p className="randomchar__title">Or choose another one</p>
+        <button onClick={handlChooseChar} className="button button__main">
+          <div className="inner">try it</div>
+        </button>
+        <img src={mjolnir} alt="mjolnir" className="randomchar__decoration" />
       </div>
-    );
-  }
-}
+    </div>
+  );
+};
 
 const View = ({ char: { thumbnail, name, description, homepage, wiki } }) => {
   const isImage = thumbnail.includes('available');
