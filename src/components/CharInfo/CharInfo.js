@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { MutatingDots } from 'react-loader-spinner';
-import MarvelService from '../../services/MarvelService';
+import useMarvelService from '../../services/MarvelService';
 import './charInfo.scss';
 import { ErrorMessage } from '../ErrorMessage/ErrorMessage';
 import Skeleton from '../Skeleton/Skeleton';
@@ -9,10 +9,8 @@ import { trimArr } from '../auxiliaryFunctions/trimArr';
 
 const CharInfo = ({ charId }) => {
   const [char, setChar] = useState(null);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(false);
 
-  const marvelService = new MarvelService();
+  const { loading, error, getCharacter, clearError } = useMarvelService();
 
   useEffect(() => {
     updateChar();
@@ -27,12 +25,6 @@ const CharInfo = ({ charId }) => {
 
   const onCharLoaded = char => {
     setChar(char);
-    setLoading(false);
-  };
-
-  const onError = () => {
-    setError(true);
-    setLoading(false);
   };
 
   const updateChar = async () => {
@@ -40,11 +32,11 @@ const CharInfo = ({ charId }) => {
       return;
     }
     try {
-      setLoading(true);
-      const res = await marvelService.getCharacter(charId);
+      clearError();
+      const res = await getCharacter(charId);
       onCharLoaded(res);
     } catch (error) {
-      onError();
+      console.log(error);
     }
   };
 

@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { MutatingDots } from 'react-loader-spinner';
-import MarvelService from '../../services/MarvelService';
+import useMarvelService from '../../services/MarvelService';
 import { ErrorMessage } from '../ErrorMessage/ErrorMessage';
 import { truncateString } from '../auxiliaryFunctions/truncateString';
 import mjolnir from '../../resources/img/mjolnir.png';
@@ -8,10 +8,7 @@ import './randomChar.scss';
 
 const RandomChar = () => {
   const [char, setChar] = useState({});
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(false);
-
-  const marvelService = new MarvelService();
+  const { loading, error, getCharacter, clearError } = useMarvelService();
 
   useEffect(() => {
     updateChar();
@@ -20,28 +17,21 @@ const RandomChar = () => {
 
   const onCharLoaded = char => {
     setChar(char);
-    setLoading(false);
-  };
-
-  const onError = () => {
-    setError(true);
-    setLoading(false);
   };
 
   const handlChooseChar = () => {
-    setLoading(true);
-    setError(false);
     updateChar();
   };
 
   const updateChar = async () => {
+    clearError();
     const id = Math.floor(Math.random() * (1011400 - 1011000) + 1011000);
 
     try {
-      const res = await marvelService.getCharacter(id);
+      const res = await getCharacter(id);
       onCharLoaded(res);
     } catch (error) {
-      onError();
+      console.log(error);
     }
   };
 
@@ -79,15 +69,15 @@ const RandomChar = () => {
 };
 
 const View = ({ char: { thumbnail, name, description, homepage, wiki } }) => {
-  const isImage = thumbnail.includes('available');
+  console.log(thumbnail);
+  let isImage = '';
+  const errorImg =
+    'http://i.annihil.us/u/prod/marvel/i/mg/b/40/image_not_available.jpg';
+  isImage = errorImg === thumbnail ? 'randomchar__no-image' : 'randomchar__img';
 
   return (
     <div className="randomchar__block">
-      <img
-        src={thumbnail}
-        alt="Random character"
-        className={isImage ? 'randomchar__no-image' : 'randomchar__img'}
-      />
+      <img src={thumbnail} alt="Random character" className={isImage} />
       <div className="randomchar__info">
         <p className="randomchar__name">{name}</p>
         {description ? (

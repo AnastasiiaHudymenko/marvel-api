@@ -1,31 +1,29 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { MutatingDots } from 'react-loader-spinner';
 import { ErrorMessage } from '../ErrorMessage/ErrorMessage';
-import MarvelService from '../../services/MarvelService';
+import useMarvelService from '../../services/MarvelService';
 import './charList.scss';
 
 const CharList = props => {
   const [charList, setCharList] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(false);
   const [offset, setOffset] = useState(210);
   const [newLoading, setNewLoading] = useState(false);
   const [charending, setCharending] = useState(false);
 
-  const marvelService = new MarvelService();
+  const { loading, error, getAllCharacters } = useMarvelService();
 
   useEffect(() => {
-    onRequest();
+    onRequest(offset, true);
     // eslint-disable-next-line
   }, []);
 
-  const onRequest = async offset => {
+  const onRequest = async (offset, initial) => {
     try {
-      onCharListLoading();
-      const res = await marvelService.getAllCharacters(offset);
+      initial ? setNewLoading(false) : setNewLoading(true);
+      const res = await getAllCharacters(offset);
       onCharListLoaded(res);
     } catch (error) {
-      onError();
+      console.log(error);
     }
   };
 
@@ -35,19 +33,9 @@ const CharList = props => {
       ending = true;
     }
     setCharList(charList => [...charList, ...newCharList]);
-    setLoading(false);
     setOffset(offset => offset + 9);
     setNewLoading(false);
     setCharending(ending);
-  };
-
-  const onCharListLoading = () => {
-    setNewLoading(true);
-  };
-
-  const onError = () => {
-    setError(true);
-    setLoading(false);
   };
 
   const itemsRef = useRef([]);
@@ -92,22 +80,22 @@ const CharList = props => {
   const items = renderItems(charList);
 
   const errorMessage = error ? <ErrorMessage /> : null;
-  const spinner = loading ? (
-    <MutatingDots
-      height="100"
-      width="100"
-      color="#344434"
-      ariaLabel="mutating-dots-loading"
-      wrapperClass="loader"
-    />
-  ) : null;
-  const content = !(loading || error) ? items : null;
+  const spinner =
+    loading && !newLoading ? (
+      <MutatingDots
+        height="100"
+        width="100"
+        color="#344434"
+        ariaLabel="mutating-dots-loading"
+        wrapperClass="loader"
+      />
+    ) : null;
 
   return (
     <div className="char__list">
       {errorMessage}
       {spinner}
-      {content}
+      {items}
       <button
         className="button button__main button__long"
         disabled={newLoading}
