@@ -6,13 +6,13 @@ import useMarvelService from '../services/MarvelService';
 
 export const SingleComicPage = () => {
   const [comic, setComic] = useState(null);
-  const comicId = useParams();
+  const { comicId } = useParams();
   const { getComicId } = useMarvelService();
 
   useEffect(() => {
-    onRequest(comicId.comicId);
+    onRequest(comicId);
     // eslint-disable-next-line
-  }, []);
+  }, [comicId]);
 
   const onRequest = async id => {
     try {
