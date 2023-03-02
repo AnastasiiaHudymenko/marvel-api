@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import useMarvelService from '../../services/MarvelService';
 import { MutatingDots } from 'react-loader-spinner';
 import { ErrorMessage } from '../ErrorMessage/ErrorMessage';
@@ -52,10 +53,10 @@ const ComicsList = () => {
       {errorMessage}
       {spinner}
       <ul className="comics__grid">
-        {comics.map(({ title, price, thumbnail }, i) => {
+        {comics.map(({ title, price, thumbnail, id }, i) => {
           return (
             <li key={i} className="comics__item">
-              <a href={thumbnail}>
+              <Link to={`${id}`}>
                 <img
                   src={thumbnail}
                   alt="ultimate war"
@@ -63,7 +64,7 @@ const ComicsList = () => {
                 />
                 <div className="comics__item-name">{title}</div>
                 <div className="comics__item-price">{price}</div>
-              </a>
+              </Link>
             </li>
           );
         })}

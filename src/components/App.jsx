@@ -1,40 +1,31 @@
-// import { useState } from 'react';
-// import { ErrorBoundary } from './ErrorBoundary/ErrorBoundary';
-import AppHeader from '../components/AppHeader/AppHeader';
-// import RandomChar from '../components/RandomChar/RandomChar';
-// import CharList from '../components/CharList/CharList';
-// import CharInfo from '../components/CharInfo/CharInfo';
-
-// import decoration from '../resources/img/vision.png';
-import AppBanner from './AppBanner/AppBunner';
-import ComicsList from './ComicsList/ComicsList';
+import { useState } from 'react';
+import { Routes, Route } from 'react-router-dom';
+import { MainPage } from '../pages/MainPage';
+import { ComicsPage } from '../pages/ComicsPage';
+import { AppHeader } from '../components/AppHeader/AppHeader';
+import { SingleComicPage } from '../pages/SinglComicPage';
 
 const App = () => {
-  // const [selectedChar, setSelectedChar] = useState(null);
+  const [selectedChar, setSelectedChar] = useState(null);
 
-  // const onCharSelected = id => {
-  //   setSelectedChar(id);
-  // };
+  const onCharSelected = id => {
+    setSelectedChar(id);
+  };
 
   return (
     <div className="app">
-      <AppHeader />
-      <main>
-        {/* <RandomChar />
-
-        <div className="char__content">
-          <ErrorBoundary>
-            <CharList onCharSelected={onCharSelected} />
-          </ErrorBoundary>
-
-          <ErrorBoundary>
-            <CharInfo charId={selectedChar} />
-          </ErrorBoundary>
-        </div>
-        <img className="bg-decoration" src={decoration} alt="vision" /> */}
-        <AppBanner />
-        <ComicsList />
-      </main>
+      <Routes>
+        <Route path="/" element={<AppHeader />}>
+          <Route
+            index
+            element={
+              <MainPage onCharSelected={onCharSelected} charId={selectedChar} />
+            }
+          />
+          <Route path="/comics" element={<ComicsPage />} />
+          <Route path="/comics/:comicId" element={<SingleComicPage />} />
+        </Route>
+      </Routes>
     </div>
   );
 };
