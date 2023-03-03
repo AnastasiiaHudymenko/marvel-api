@@ -9,9 +9,9 @@ import './style/style.scss';
 import './style/variables.scss';
 
 ReactDOM.createRoot(document.getElementById('root')).render(
-  <BrowserRouter basename="/marvel-api">
-    {/* <React.StrictMode> */}
-    <App />
-    {/* </React.StrictMode> */}
-  </BrowserRouter>
+  <React.StrictMode>
+    <BrowserRouter basename="/marvel-api">
+      <App />
+    </BrowserRouter>
+  </React.StrictMode>
 );
