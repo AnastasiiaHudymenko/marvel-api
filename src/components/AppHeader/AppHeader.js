@@ -1,11 +1,8 @@
-import { Outlet, NavLink, useLocation } from 'react-router-dom';
+import { Outlet, NavLink } from 'react-router-dom';
 
 import './appHeader.scss';
 
 export const AppHeader = () => {
-  const location = useLocation();
-  console.log(location);
-
   return (
     <>
       <header className="app__header">
@@ -19,11 +16,7 @@ export const AppHeader = () => {
             <NavLink className="navLink" to="/" end>
               Characters
             </NavLink>
-            <NavLink
-              className="navLink"
-              to="/comics"
-              state={{ from: location }}
-            >
+            <NavLink className="navLink" to="/comics">
               Comics
             </NavLink>
           </ul>

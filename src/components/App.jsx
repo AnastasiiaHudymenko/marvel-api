@@ -4,7 +4,7 @@ import { MainPage } from '../pages/MainPage';
 import { ComicsPage } from '../pages/ComicsPage';
 import { AppHeader } from '../components/AppHeader/AppHeader';
 import { SingleComicPage } from '../pages/SinglComicPage';
-// import NotFoundPage from '../pages/404Page';
+import NotFoundPage from '../pages/404Page';
 
 const App = () => {
   const [selectedChar, setSelectedChar] = useState(null);
@@ -25,7 +25,7 @@ const App = () => {
           />
           <Route path="/comics" element={<ComicsPage />} />
           <Route path="/comics/:comicId" element={<SingleComicPage />} />
-          <Route path="*" element={<MainPage />} />
+          <Route path="*" element={<NotFoundPage />} />
         </Route>
       </Routes>
     </div>
