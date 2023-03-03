@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import useMarvelService from '../../services/MarvelService';
 import { MutatingDots } from 'react-loader-spinner';
 import { ErrorMessage } from '../ErrorMessage/ErrorMessage';
@@ -10,6 +10,8 @@ const ComicsList = () => {
   const [offset, setOffset] = useState(8);
   const [newLoading, setNewLoading] = useState(false);
   const [charending, setCharending] = useState(false);
+  const location = useLocation();
+  console.log(location);
 
   const { loading, error, getAllComics } = useMarvelService();
 
