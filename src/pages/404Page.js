@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom';
 import notFound from '../img/no_results_found.png';
 
-const ErrorPage = () => {
+const NotFoundPage = () => {
   return (
     <div style={{ marginTop: '50px' }}>
       <div style={{ display: 'flex', justifyContent: 'center' }}>
@@ -17,4 +17,4 @@ const ErrorPage = () => {
   );
 };
 
-export default ErrorPage;
+export default NotFoundPage;
