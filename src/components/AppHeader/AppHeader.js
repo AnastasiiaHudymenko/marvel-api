@@ -26,5 +26,3 @@ export const AppHeader = () => {
     </>
   );
 };
-
-export default AppHeader;
