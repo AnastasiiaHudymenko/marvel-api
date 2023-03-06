@@ -70,7 +70,11 @@
       To create a production bundle, use `npm run build` or `yarn build`.
     -->
     <script>
-      if (window.location.pathname !== '/') {
+      if (
+        window.location.pathname !== '/comics' &&
+        window.location.pathname !== '/' &&
+        window.location.pathname !== '/comics:'
+      ) {
         window.location.href = '/';
       }
     </script>
