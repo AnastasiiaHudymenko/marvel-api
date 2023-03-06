@@ -4,7 +4,7 @@ import { MainPage } from '../pages/MainPage';
 import { ComicsPage } from '../pages/ComicsPage';
 import { AppHeader } from '../components/AppHeader/AppHeader';
 import { SingleComicPage } from '../pages/SinglComicPage';
-import NotFoundPage from '../pages/404Page';
+// import NotFoundPage from '../pages/404Page';
 
 const App = () => {
   const [selectedChar, setSelectedChar] = useState(null);
