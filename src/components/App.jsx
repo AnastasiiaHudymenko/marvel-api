@@ -15,18 +15,17 @@ const App = () => {
 
   return (
     <div className="app">
+      <AppHeader />
       <Routes>
-        <Route path="/" element={<AppHeader />}>
-          <Route
-            index
-            element={
-              <MainPage onCharSelected={onCharSelected} charId={selectedChar} />
-            }
-          />
-          <Route path="/comics" element={<ComicsPage />} />
-          <Route path="/comics/:comicId" element={<SingleComicPage />} />
-          <Route path="*" element={<NotFoundPage />} />
-        </Route>
+        <Route
+          path="/"
+          element={
+            <MainPage onCharSelected={onCharSelected} charId={selectedChar} />
+          }
+        />
+        <Route path="/comics" element={<ComicsPage />} />
+        <Route path="/comics/:comicId" element={<SingleComicPage />} />
+        <Route path="*" element={<NotFoundPage />} />
       </Routes>
     </div>
   );
