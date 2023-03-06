@@ -18,14 +18,14 @@ const App = () => {
       <AppHeader />
       <Routes>
         <Route
-          path={process.env.PUBLIC_URL + '/'}
+          path="/"
           element={
             <MainPage onCharSelected={onCharSelected} charId={selectedChar} />
           }
         />
         <Route path="/comics" element={<ComicsPage />} />
         <Route path="/comics/:comicId" element={<SingleComicPage />} />
-        <Route path={process.env.PUBLIC_URL + '*'} element={<NotFoundPage />} />
+        <Route path="*" element={<NotFoundPage />} />
       </Routes>
     </div>
   );
