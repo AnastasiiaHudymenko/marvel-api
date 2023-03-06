@@ -22,7 +22,6 @@ export const AppHeader = () => {
           </ul>
         </nav>
       </header>
-      <Outlet />
     </>
   );
 };
